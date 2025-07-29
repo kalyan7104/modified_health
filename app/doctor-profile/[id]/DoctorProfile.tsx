@@ -7,23 +7,24 @@ import { useRouter } from 'next/navigation';
 interface DoctorProfileProps {
   doctorId: string;
 }
+
 interface Doctor {
   id: string;
   name: string;
-  specialization: string;
-  location: string;
-  experience: number;
+  specialty: string;
+  experience: string; // changed from number to string since mock data uses '12 years'
   education: string;
-  fees: number;
+  hospital: string;
+  availability: string;
+  consultationFee: string;
   languages: string[];
   rating: number;
   reviews: number;
-  image: string;
-  availableDates: string[];
-  workingHours: Record<string, string>; // 👈 fixes the error
-  bio: string;
+  avatar: string;
+  about: string;
+  achievements: string[];
+  workingHours: Record<string, string>;
 }
-
 
 export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -31,9 +32,8 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Mock doctor data
-    const doctorData = {
-      'D001': {
+    const doctorData: Record<string, Doctor> = {
+      D001: {
         id: 'D001',
         name: 'Dr. Sarah Johnson',
         specialty: 'Cardiology',
@@ -45,8 +45,10 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
         consultationFee: '$150',
         education: 'MD from Harvard Medical School',
         languages: ['English', 'Spanish'],
-        avatar: 'https://readdy.ai/api/search-image?query=Professional%20portrait%20of%20female%20cardiologist%20doctor%20with%20stethoscope%2C%20medical%20coat%2C%20confident%20smile%2C%20hospital%20background%2C%20medical%20photography%20style&width=120&height=120&seq=doc1&orientation=squarish',
-        about: 'Dr. Sarah Johnson is a board-certified cardiologist with over 12 years of experience in treating heart conditions. She specializes in preventive cardiology and has published numerous research papers in cardiovascular medicine.',
+        avatar:
+          'https://readdy.ai/api/search-image?query=Professional%20portrait%20of%20female%20cardiologist%20doctor%20with%20stethoscope%2C%20medical%20coat%2C%20confident%20smile%2C%20hospital%20background%2C%20medical%20photography%20style&width=120&height=120&seq=doc1&orientation=squarish',
+        about:
+          'Dr. Sarah Johnson is a board-certified cardiologist with over 12 years of experience in treating heart conditions. She specializes in preventive cardiology and has published numerous research papers in cardiovascular medicine.',
         achievements: [
           'Board Certified in Cardiology',
           'Fellow of American College of Cardiology',
@@ -63,7 +65,7 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
           sunday: 'Closed'
         }
       },
-      'D002': {
+      D002: {
         id: 'D002',
         name: 'Dr. Michael Chen',
         specialty: 'Orthopedics',
@@ -75,8 +77,10 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
         consultationFee: '$120',
         education: 'MD from Johns Hopkins University',
         languages: ['English', 'Mandarin'],
-        avatar: 'https://readdy.ai/api/search-image?query=Professional%20portrait%20of%20Asian%20male%20orthopedic%20doctor%20with%20glasses%2C%20white%20coat%2C%20stethoscope%2C%20friendly%20expression%2C%20clinical%20setting&width=120&height=120&seq=doc2&orientation=squarish',
-        about: 'Dr. Michael Chen is an experienced orthopedic surgeon specializing in joint replacement and sports medicine. He has helped hundreds of patients recover from various orthopedic conditions.',
+        avatar:
+          'https://readdy.ai/api/search-image?query=Professional%20portrait%20of%20Asian%20male%20orthopedic%20doctor%20with%20glasses%2C%20white%20coat%2C%20stethoscope%2C%20friendly%20expression%2C%20clinical%20setting&width=120&height=120&seq=doc2&orientation=squarish',
+        about:
+          'Dr. Michael Chen is an experienced orthopedic surgeon specializing in joint replacement and sports medicine. He has helped hundreds of patients recover from various orthopedic conditions.',
         achievements: [
           'Board Certified in Orthopedic Surgery',
           'Sports Medicine Fellowship',
@@ -95,7 +99,7 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
       }
     };
 
-    const currentDoctor = doctorData[doctorId as keyof typeof doctorData];
+    const currentDoctor = doctorData[doctorId];
     if (currentDoctor) {
       setDoctor(currentDoctor);
     }
@@ -111,7 +115,6 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="px-4 py-4">
           <div className="flex items-center space-x-3">
@@ -130,15 +133,11 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
         {/* Doctor Info Card */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <div className="flex items-start space-x-4">
-            <img 
-              src={doctor.avatar} 
-              alt={doctor.name}
-              className="w-20 h-20 rounded-full object-cover"
-            />
+            <img src={doctor.avatar} alt={doctor.name} className="w-20 h-20 rounded-full object-cover" />
             <div className="flex-1">
               <h2 className="text-xl font-bold text-gray-900 mb-1">{doctor.name}</h2>
               <p className="text-blue-600 font-medium mb-2">{doctor.specialty}</p>
-              
+
               <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                 <div className="flex items-center space-x-1">
                   <i className="ri-star-fill text-yellow-400"></i>
@@ -150,67 +149,52 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
                   <span>{doctor.experience}</span>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <i className="ri-hospital-line text-gray-400"></i>
                 <span>{doctor.hospital}</span>
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
             <div className="flex items-center space-x-4">
               <span className="text-lg font-bold text-gray-900">{doctor.consultationFee}</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                doctor.availability === 'Available Today' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  doctor.availability === 'Available Today'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}
+              >
                 {doctor.availability}
               </span>
             </div>
-            <Link 
+            <Link
               href={`/book-appointment?doctorId=${doctor.id}`}
-              className="bg-blue-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-blue-700 transition-colors !rounded-button"
+              className="bg-blue-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-blue-700 transition-colors"
             >
               Book Appointment
             </Link>
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="flex border-b border-gray-100">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-                activeTab === 'overview' 
-                  ? 'text-blue-600 border-b-2 border-blue-600' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('schedule')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-                activeTab === 'schedule' 
-                  ? 'text-blue-600 border-b-2 border-blue-600' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Schedule
-            </button>
-            <button
-              onClick={() => setActiveTab('reviews')}
-              className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-                activeTab === 'reviews' 
-                  ? 'text-blue-600 border-b-2 border-blue-600' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Reviews
-            </button>
+            {['overview', 'schedule', 'reviews'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+                  activeTab === tab
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
           </div>
 
           <div className="p-4">
@@ -220,7 +204,6 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">About</h3>
                   <p className="text-gray-600 leading-relaxed">{doctor.about}</p>
                 </div>
-                
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Education & Experience</h3>
                   <div className="space-y-2">
@@ -234,23 +217,24 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
                     </div>
                   </div>
                 </div>
-                
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Languages</h3>
                   <div className="flex flex-wrap gap-2">
-                    {doctor.languages.map((language: string) => (
-                      <span key={language} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                    {doctor.languages.map((language) => (
+                      <span
+                        key={language}
+                        className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                      >
                         {language}
                       </span>
                     ))}
                   </div>
                 </div>
-                
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Achievements</h3>
                   <div className="space-y-2">
-                    {doctor.achievements.map((achievement: string, index: number) => (
-                      <div key={index} className="flex items-center space-x-2">
+                    {doctor.achievements.map((achievement, idx) => (
+                      <div key={idx} className="flex items-center space-x-2">
                         <i className="ri-award-line text-yellow-500"></i>
                         <span className="text-gray-700">{achievement}</span>
                       </div>
@@ -264,10 +248,17 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900">Working Hours</h3>
                 <div className="space-y-3">
-                  {doctor && Object.entries(doctor.workingHours).map(([day, hours]) => (
-                    <div key={day} className="flex items-center justify-between py-2 border-b border-gray-100">
+                  {Object.entries(doctor.workingHours).map(([day, hours]) => (
+                    <div
+                      key={day}
+                      className="flex items-center justify-between py-2 border-b border-gray-100"
+                    >
                       <span className="text-gray-700 font-medium capitalize">{day}</span>
-                      <span className={`text-sm ${hours === 'Closed' ? 'text-red-600' : 'text-gray-600'}`}>
+                      <span
+                        className={`text-sm ${
+                          hours === 'Closed' ? 'text-red-600' : 'text-gray-600'
+                        }`}
+                      >
                         {hours}
                       </span>
                     </div>
@@ -288,18 +279,16 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
                     <span className="text-sm text-gray-500">({doctor.reviews} reviews)</span>
                   </div>
                 </div>
-                
                 <div className="space-y-4">
-                  {/* Mock Reviews */}
-                  {[1, 2, 3].map((review) => (
-                    <div key={review} className="border-b border-gray-100 pb-4">
+                  {[1, 2, 3].map((r) => (
+                    <div key={r} className="border-b border-gray-100 pb-4">
                       <div className="flex items-start space-x-3">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                           <i className="ri-user-line text-blue-600"></i>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
-                            <h4 className="font-medium text-gray-900">Patient {review}</h4>
+                            <h4 className="font-medium text-gray-900">Patient {r}</h4>
                             <div className="flex items-center space-x-1">
                               {[...Array(5)].map((_, i) => (
                                 <i key={i} className="ri-star-fill text-yellow-400 text-sm"></i>
