@@ -7,9 +7,26 @@ import { useRouter } from 'next/navigation';
 interface DoctorProfileProps {
   doctorId: string;
 }
+interface Doctor {
+  id: string;
+  name: string;
+  specialization: string;
+  location: string;
+  experience: number;
+  education: string;
+  fees: number;
+  languages: string[];
+  rating: number;
+  reviews: number;
+  image: string;
+  availableDates: string[];
+  workingHours: Record<string, string>; // 👈 fixes the error
+  bio: string;
+}
+
 
 export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
-  const [doctor, setDoctor] = useState<any>(null);
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
   const router = useRouter();
 
@@ -247,7 +264,7 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900">Working Hours</h3>
                 <div className="space-y-3">
-                  {Object.entries(doctor.workingHours).map(([day, hours]) => (
+                  {doctor && Object.entries(doctor.workingHours).map(([day, hours]) => (
                     <div key={day} className="flex items-center justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-700 font-medium capitalize">{day}</span>
                       <span className={`text-sm ${hours === 'Closed' ? 'text-red-600' : 'text-gray-600'}`}>
