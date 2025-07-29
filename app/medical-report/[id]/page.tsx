@@ -182,7 +182,7 @@ export default function MedicalReportPage({ params }: { params: { id: string } }
                 <span className="text-sm font-medium text-gray-600 capitalize">
                   {key.replace(/([A-Z])/g, ' $1').trim()}
                 </span>
-                <span className="text-sm font-bold text-gray-900">{value}</span>
+                <span className="text-sm font-bold text-gray-900">String{value}</span>
               </div>
             ))}
           </div>
