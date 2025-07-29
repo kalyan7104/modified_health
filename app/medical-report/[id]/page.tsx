@@ -5,15 +5,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export async function generateStaticParams() {
-  return [
-    { id: 'A001' },
-    { id: 'A002' },
-    { id: 'A003' },
-    { id: 'A004' },
-    { id: 'A005' },
-  ];
-}
+
+
 
 export default function MedicalReportPage({ params }: { params: { id: string } }) {
   const [report, setReport] = useState<any>(null);
